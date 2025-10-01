@@ -479,10 +479,11 @@ void sanitize_args() {
 		exit(1);
 	}
 
-	if (uwsgi.cheaper_rss_limit_soft && uwsgi.logging_options.memory_report != 1 && uwsgi.force_get_memusage != 1) {
+	if (uwsgi.cheaper_rss_limit_soft && !uwsgi.logging_options.memory_report && uwsgi.force_get_memusage != 1) {
 		uwsgi_log("enabling cheaper-rss-limit-soft requires enabling also memory-report\n");
 		exit(1);
 	}
+
 	if (uwsgi.cheaper_rss_limit_hard && !uwsgi.cheaper_rss_limit_soft) {
 		uwsgi_log("enabling cheaper-rss-limit-hard requires setting also cheaper-rss-limit-soft\n");
 		exit(1);

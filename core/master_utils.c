@@ -672,6 +672,10 @@ int uwsgi_respawn_worker(int wid) {
 	uwsgi.workers[wid].pending_harakiri = 0;
 	uwsgi.workers[wid].rss_size = 0;
 	uwsgi.workers[wid].vsz_size = 0;
+#ifdef __linux__
+	uwsgi.workers[wid].uss_size = 0;
+	uwsgi.workers[wid].pss_size = 0;
+#endif
 	// ... reset stopped_at
 	uwsgi.workers[wid].cursed_at = 0;
 	uwsgi.workers[wid].no_mercy_at = 0;
@@ -1130,7 +1134,12 @@ struct uwsgi_stats *uwsgi_master_generate_stats() {
 			goto end;
 		if (uwsgi_stats_keylong_comma(us, "vsz", (unsigned long long) uwsgi.workers[i + 1].vsz_size))
 			goto end;
-
+#ifdef __linux__
+		if (uwsgi_stats_keylong_comma(us, "uss", (unsigned long long) uwsgi.workers[i + 1].uss_size))
+			goto end;
+		if (uwsgi_stats_keylong_comma(us, "pss", (unsigned long long) uwsgi.workers[i + 1].pss_size))
+			goto end;
+#endif
 		if (uwsgi_stats_keylong_comma(us, "running_time", (unsigned long long) uwsgi.workers[i + 1].running_time))
 			goto end;
 		if (uwsgi_stats_keylong_comma(us, "last_spawn", (unsigned long long) uwsgi.workers[i + 1].last_spawn))
